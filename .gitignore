@@ -1,0 +1,20 @@
+# ===== 敏感配置（绝对不提交）=====
+db.php
+*.env
+config.local.php
+
+# ===== 运行产物 =====
+uploads/
+logs/
+*.log
+*.tmp
+*.bak
+
+# ===== 备份文件夹 =====
+backup_*/
+
+# ===== 编辑器 / 系统 =====
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

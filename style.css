@@ -1,0 +1,76 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: #f4f6fb;
+    color: #1f2430;
+    line-height: 1.6;
+}
+
+.wrap { width: min(760px, 92%); margin: 0 auto; }
+
+.topbar { background: #fff; border-bottom: 1px solid #e8ebf2; position: sticky; top: 0; z-index: 10; }
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+.logo { font-weight: 700; font-size: 18px; color: #2b59ff; text-decoration: none; }
+.topbar nav { display: flex; align-items: center; gap: 10px; }
+.user { color: #667085; font-size: 14px; }
+
+.card {
+    background: #fff; border: 1px solid #e8ebf2; border-radius: 14px;
+    padding: 20px; margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(16, 24, 40, .04);
+}
+.card h2 { margin: 0 0 14px; font-size: 16px; }
+
+.btn {
+    display: inline-block; padding: 8px 16px; border-radius: 10px;
+    border: 1px solid transparent; font-size: 14px; cursor: pointer;
+    text-decoration: none; transition: .15s;
+}
+.btn.primary { background: #2b59ff; color: #fff; }
+.btn.primary:hover { background: #1e46d8; }
+.btn.ghost { background: #fff; border-color: #d8ddea; color: #344054; }
+.btn.ghost:hover { border-color: #2b59ff; color: #2b59ff; }
+
+.auth-card { max-width: 380px; margin: 80px auto; }
+label { display: block; margin-bottom: 14px; font-size: 14px; color: #475467; }
+input[type=text], input[type=password], textarea {
+    width: 100%; margin-top: 6px; padding: 10px 12px;
+    border: 1px solid #d8ddea; border-radius: 10px;
+    font-size: 14px; font-family: inherit; outline: none;
+}
+input:focus, textarea:focus { border-color: #2b59ff; box-shadow: 0 0 0 3px rgba(43,89,255,.12); }
+
+.write-form { display: grid; gap: 10px; }
+.write-form textarea { resize: vertical; }
+.write-form .btn { justify-self: end; }
+
+.msg { margin: 14px 0; }
+.msg-head { display: flex; align-items: center; gap: 10px; }
+.msg-head time { margin-left: auto; font-size: 12px; color: #98a2b3; }
+.avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #eaf0ff; color: #2b59ff;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 14px;
+}
+.msg-body { margin: 10px 0; white-space: pre-wrap; word-break: break-word; }
+.msg-foot { display: flex; align-items: center; gap: 14px; }
+
+.like-form { margin: 0; }
+.like-btn {
+    background: none; border: 1px solid #e8ebf2; border-radius: 999px;
+    padding: 4px 12px; cursor: pointer; color: #667085; font-size: 14px; transition: .15s;
+}
+.like-btn:hover { border-color: #ff5a76; color: #ff5a76; }
+.like-btn.liked { background: #fff0f3; border-color: #ff5a76; color: #ff5a76; }
+.like-btn.disabled { cursor: default; color: #98a2b3; }
+
+.del { font-size: 13px; color: #98a2b3; text-decoration: none; }
+.del:hover { color: #e5484d; }
+
+.error { color: #e5484d; font-size: 13px; margin: 0 0 10px; }
+.muted { color: #98a2b3; font-size: 13px; }
+.login-tip { text-align: center; }
+.login-tip p { margin: 0 0 12px; color: #667085; }
