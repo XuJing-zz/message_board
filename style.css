@@ -91,3 +91,12 @@ input:focus, textarea:focus { border-color: #2b59ff; box-shadow: 0 0 0 3px rgba(
 .pager a { padding: 6px 12px; border: 1px solid #d8ddea; border-radius: 8px; text-decoration: none; color: #344054; }
 .pager a.active { background: #2b59ff; border-color: #2b59ff; color: #fff; }
 select { width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid #d8ddea; border-radius: 10px; font-size: 14px; font-family: inherit; }
+
+/* ===== 前台文章 ===== */
+.art-title a { color: #1f2430; text-decoration: none; }
+.art-title a:hover { color: #2b59ff; }
+.art-cover { width: 100%; max-height: 280px; object-fit: cover; border-radius: 10px; margin: 10px 0; display: block; }
+.art-content { margin: 16px 0; line-height: 1.9; }
+.comment-list { margin-top: 16px; }
+.comment { border-top: 1px solid #eef1f6; padding: 12px 0; }
+.comment p { margin: 6px 0 0; white-space: pre-wrap; }
