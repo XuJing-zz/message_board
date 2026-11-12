@@ -4,7 +4,7 @@ require_once __DIR__ . '/../db.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -34,4 +34,40 @@ function body(): array
         return is_array($j) ? $j : [];
     }
     return $_POST;
+}
+
+function need_post(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fail('请用 POST 请求', 405, 405);
+    }
+}
+
+/** 必须登录（API 版） */
+function api_login(): array
+{
+    $u = current_user();
+    if (!$u) {
+        fail('请先登录', 401, 401);
+    }
+    return $u;
+}
+
+/** 必须是管理员 */
+function api_admin(): array
+{
+    $u = api_login();
+    if (($u['role'] ?? '') !== 'admin') {
+        fail('需要管理员权限', 403, 403);
+    }
+    return $u;
+}
+
+/** 分页参数 */
+function page_params(int $defaultSize = 10): array
+{
+    $page = max(1, (int)($_GET['page'] ?? 1));
+    $size = (int)($_GET['size'] ?? $defaultSize);
+    $size = $size < 1 ? $defaultSize : min(50, $size);
+    return [$page, $size, ($page - 1) * $size];
 }

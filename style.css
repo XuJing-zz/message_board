@@ -74,3 +74,20 @@ input:focus, textarea:focus { border-color: #2b59ff; box-shadow: 0 0 0 3px rgba(
 .muted { color: #98a2b3; font-size: 13px; }
 .login-tip { text-align: center; }
 .login-tip p { margin: 0 0 12px; color: #667085; }
+/* ===== 管理后台 ===== */
+.admin-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.admin-head h2 { margin: 0; }
+.filter { display: flex; gap: 8px; margin-bottom: 14px; }
+.filter select { width: auto; margin-top: 0; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th,
+.admin-table td { border-bottom: 1px solid #eef1f6; padding: 10px 8px; text-align: left; vertical-align: middle; }
+.admin-table th { background: #f8fafc; font-weight: 600; color: #475467; }
+.admin-table tr:hover td { background: #fafbff; }
+.tag { padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+.tag.published { background: #e7f7ee; color: #12805c; }
+.tag.draft { background: #f1f3f9; color: #667085; }
+.pager { display: flex; gap: 6px; margin-top: 14px; }
+.pager a { padding: 6px 12px; border: 1px solid #d8ddea; border-radius: 8px; text-decoration: none; color: #344054; }
+.pager a.active { background: #2b59ff; border-color: #2b59ff; color: #fff; }
+select { width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid #d8ddea; border-radius: 10px; font-size: 14px; font-family: inherit; }

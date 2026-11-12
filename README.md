@@ -1,146 +1,153 @@
-# 留言板（Message Board）
+# 内容后台（文章 + 点赞 + 留言）
 
-原生 PHP + MySQL 实现的留言板，练习表单提交、Session 登录、数据库增删查与点赞。
+原生 PHP + MySQL 实现的内容管理系统，包含前台展示、后台管理，以及一套供 Vue / Apifox 使用的 JSON 接口。
 
-## 功能
-
-- 用户注册 / 登录 / 退出（密码 `password_hash` 加密）
-- 发布留言（需登录）
-- 留言列表（用户名、内容、时间、点赞数）
-- 点赞 / 取消点赞（同一用户对同一条只能赞一次）
-- 删除留言（只能删自己的）
-- 提供一套 JSON API，供 Apifox / Vue 调试使用
+- 前台：留言板（旧）+ 文章浏览
+- 后台：管理员登录、文章增删改查、留言管理
+- 接口：管理员、文章后台、文章用户、点赞、留言 五组 JSON API
 
 ## 环境要求
 
 - phpStudy（Nginx 或 Apache + PHP 7.4+ + MySQL 5.7+）
 - PHP 扩展：mysqli、mbstring
-- 本机验证环境：PHP 8.0.30 + MySQL 5.7.26
+- 本机验证：PHP 8.0.30 + MySQL 5.7.26
 
 ## 快速开始
 
-1. 把项目放到网站根目录：
-
-   ```
-   D:\phpstudy_pro\WWW\message\
-   ```
-
-2. 复制配置模板并填写数据库信息：
+1. 项目放到 `D:\phpstudy_pro\WWW\message\`
+2. 复制配置并填写数据库信息：
 
    ```bash
    cp db.example.php db.php
    ```
 
-   编辑 `db.php`，改成你自己的账号密码。
+3. 导入数据库：
 
-3. 建库建表（在 phpMyAdmin 里执行 `sql/init.sql`，或手动执行下面 SQL）：
-
-   ```sql
-   CREATE DATABASE IF NOT EXISTS message_board
-     DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-   USE message_board;
-
-   CREATE TABLE users (
-     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-     username VARCHAR(50) NOT NULL,
-     password VARCHAR(255) NOT NULL,
-     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     PRIMARY KEY (id),
-     UNIQUE KEY uk_users_username (username)
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-   CREATE TABLE message (
-     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-     user_id INT UNSIGNED NOT NULL,
-     content TEXT NOT NULL,
-     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     PRIMARY KEY (id),
-     KEY idx_message_user (user_id),
-     CONSTRAINT fk_message_user FOREIGN KEY (user_id) REFERENCES users (id)
-       ON DELETE CASCADE ON UPDATE CASCADE
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-   CREATE TABLE likes (
-     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-     message_id INT UNSIGNED NOT NULL,
-     user_id INT UNSIGNED NOT NULL,
-     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     PRIMARY KEY (id),
-     UNIQUE KEY uk_likes_msg_user (message_id, user_id),
-     CONSTRAINT fk_likes_message FOREIGN KEY (message_id) REFERENCES message (id)
-       ON DELETE CASCADE ON UPDATE CASCADE,
-     CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES users (id)
-       ON DELETE CASCADE ON UPDATE CASCADE
-   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+   ```bash
+   mysql -u root -p message_board < sql/init.sql
    ```
 
-4. 启动 phpStudy 的 Nginx（或 Apache）与 MySQL
+   或 phpMyAdmin → SQL → 粘贴 `sql/init.sql` 执行。
 
-5. 访问 <http://localhost/message/index.php>
+4. 启动 phpStudy 的 Nginx 与 MySQL
+5. 打开前台：<http://localhost/message/index.php>
+6. 打开后台：<http://localhost/message/admin/login.php>
+
+## 测试账号
+
+| 角色 | 账号 | 密码 | 入口 |
+|---|---|---|---|
+| 管理员 | admin | 123456 | `/admin/login.php` |
+| 普通用户 | 自行注册 | — | `/login.php` |
 
 ## 页面路由
 
+### 前台（HTML，第一阶段成果，保留对照）
+
 | 文件 | 说明 |
 |---|---|
-| index.php | 首页：留言列表 + 发布框 |
-| login.php / register.php / logout.php | 登录 / 注册 / 退出 |
-| save.php | 处理发布留言 |
-| like.php | 处理点赞 / 取消 |
-| delete.php | 处理删除留言 |
+| `index.php` | 留言板首页 |
+| `login.php` / `register.php` / `logout.php` | 用户登录 / 注册 / 退出 |
+| `save.php` / `like.php` / `delete.php` | 留言发表 / 点赞 / 删除 |
+
+### 后台（HTML，本阶段对照版）
+
+| 文件 | 说明 |
+|---|---|
+| `admin/login.php` | 管理员登录 |
+| `admin/index.php` | 文章列表（分页、状态筛选） |
+| `admin/edit.php` | 新增 / 编辑文章 |
+| `admin/comments.php` | 留言列表与删除 |
+| `admin/logout.php` | 退出 |
 
 ## JSON 接口（Apifox）
 
 Base URL：`http://localhost/message/api`
 
-| 方法 | 路径 | 说明 | 需要登录 |
-|---|---|---|---|
-| POST | /login.php | 登录 | 否 |
-| POST | /register.php | 注册 | 否 |
-| POST | /logout.php | 退出 | 是 |
-| GET | /messages.php | 留言列表 | 否（登录后返回 liked 状态） |
-| POST | /message_create.php | 发布留言 | 是 |
-| POST | /message_delete.php | 删除留言 | 是 |
-| POST | /like.php | 点赞 / 取消 | 是 |
-
-统一返回格式：
+统一返回：
 
 ```json
-{"code": 0, "msg": "ok", "data": {}}
+{ "code": 0, "msg": "ok", "data": {} }
 ```
 
-`code` 为 0 表示成功，非 0 为错误（错误码见 `api/_common.php`）。
+`code = 0` 成功，非 0 失败。
+
+### 管理员
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| POST | `/admin/login.php` | 管理员登录，body: `username`、`password` |
+| POST | `/admin/logout.php` | 退出 |
+| GET | `/admin/me.php` | 当前登录信息 |
+
+### 文章（后台）
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/admin/articles.php` | 列表，参数 `page`、`size`、`status`、`keyword` |
+| GET | `/admin/article.php?id=1` | 详情 |
+| POST | `/admin/article_save.php` | 新增/修改：`id`(改时传)、`title`、`cover`、`content`、`status` |
+| POST | `/admin/article_delete.php` | 删除，body: `id` |
+
+### 文章（用户端）
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/articles.php` | 已发布文章列表，参数 `page`、`size` |
+| GET | `/article.php?id=1` | 详情，含 `like_count`、`liked` |
+
+### 点赞
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| POST | `/article_like.php` | 点赞，body: `article_id`，返回最新 `like_count` |
+| POST | `/article_unlike.php` | 取消点赞 |
+
+> 同一用户重复点赞返回 `code = 1004`。
+
+### 留言
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/comments.php?article_id=1` | 按文章查留言 |
+| POST | `/comments.php` | 发表留言，body: `article_id`、`content` |
+| GET | `/admin/comments.php` | 管理端留言列表，参数 `page`、`size`、`article_id` |
+| POST | `/admin/comment_delete.php` | 删除留言，body: `id` |
 
 ## 目录结构
 
 ```
 message/
-├─ index.php            首页
-├─ login.php            登录
-├─ register.php         注册
-├─ logout.php           退出
-├─ save.php             发布留言
-├─ like.php             点赞
-├─ delete.php           删除
-├─ auth.php             Session 与登录校验
-├─ functions.php        公共函数
-├─ db.php              数据库配置（已忽略，不提交）
-├─ db.example.php      配置模板
-├─ style.css           样式
-└─ api/                JSON 接口
-   ├─ _common.php
-   ├─ login.php
-   ├─ register.php
-   ├─ logout.php
-   ├─ messages.php
-   ├─ message_create.php
-   ├─ message_delete.php
-   └─ like.php
+├─ index.php / login.php / register.php / logout.php
+├─ save.php / like.php / delete.php
+├─ auth.php            会话与登录校验
+├─ functions.php       公共函数
+├─ db.php             数据库配置（已忽略，不提交）
+├─ db.example.php     配置模板
+├─ style.css          样式
+├─ admin/             HTML 管理后台
+│  ├─ login.php
+│  ├─ index.php
+│  ├─ edit.php
+│  ├─ comments.php
+│  ├─ article_delete.php
+│  └─ logout.php
+├─ api/               JSON 接口
+│  ├─ _common.php
+│  ├─ admin/          管理端接口
+│  ├─ articles.php / article.php
+│  ├─ article_like.php / article_unlike.php
+│  ├─ comments.php
+│  └─ （旧留言板接口：login / register / messages / like ...）
+└─ sql/
+   └─ init.sql        建库建表脚本（含默认管理员）
 ```
 
 ## 安全说明
 
 - 密码使用 `password_hash()` / `password_verify()`
-- 所有数据库操作使用预处理语句，防 SQL 注入
-- 页面输出统一 `htmlspecialchars()`，防 XSS
-- 删除留言时校验 `user_id`，只能删自己的
-- `db.php` 已加入 `.gitignore`，不会提交到仓库
+- 全部数据库操作使用预处理语句
+- 输出统一 `htmlspecialchars()`，防 XSS
+- 管理端接口校验 `role = admin`
+- 删除文章时同步清理点赞与留言
+- `db.php` 已加入 `.gitignore`，不会提交
