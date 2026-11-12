@@ -34,6 +34,7 @@ $result = mysqli_stmt_get_result($stmt);
     <div class="wrap topbar-inner">
         <a class="logo" href="index.php">💬 留言板</a>
         <nav>
+                <a class="btn ghost" href="article_list.php">文章</a>
             <?php if ($me): ?>
                 <span class="user">👤 <?= htmlspecialchars($me['username'], ENT_QUOTES, 'UTF-8') ?></span>
                 <a class="btn ghost" href="logout.php">退出</a>
