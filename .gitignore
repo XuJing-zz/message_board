@@ -1,5 +1,5 @@
 # ===== 敏感配置（绝对不提交）=====
-db.php
+/db.php
 *.env
 config.local.php
 
