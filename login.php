@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p class="muted">还没有账号？<a href="register.php">去注册</a></p>
-        <p class="muted"><a href="article_list.php">← 去看文章</a></p>
+        <p class="muted"><a href="index.php">← 去看文章</a></p>
     </div>
 </div>
 </body>

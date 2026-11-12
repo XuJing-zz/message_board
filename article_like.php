@@ -6,7 +6,7 @@ require_login();
 
 $user = current_user();
 $id   = (int)($_POST['article_id'] ?? 0);
-$back = $_POST['back'] ?? 'article_list.php';
+$back = $_POST['back'] ?? 'index.php';
 
 if ($id > 0) {
     $stmt = mysqli_prepare($connect,

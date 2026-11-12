@@ -7,7 +7,7 @@ $myId = $me['id'] ?? 0;
 $id   = (int)($_GET['id'] ?? 0);
 
 if ($id <= 0) {
-    header('Location: article_list.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ $a = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
 if (!$a) {
     http_response_code(404);
-    echo '文章不存在或未发布。 <a href="article_list.php">返回列表</a>';
+    echo '文章不存在或未发布。 <a href="index.php">返回列表</a>';
     exit;
 }
 
@@ -49,9 +49,9 @@ $comments = mysqli_stmt_get_result($stmt);
 
 <header class="topbar">
     <div class="wrap topbar-inner">
-        <a class="logo" href="article_list.php">📄 文章</a>
+        <a class="logo" href="index.php">📄 文章</a>
         <nav>
-            <a class="btn ghost" href="article_list.php">← 返回列表</a>
+            <a class="btn ghost" href="index.php">← 返回列表</a>
             <?php if ($me): ?>
                 <span class="user">👤 <?= htmlspecialchars($me['username'], ENT_QUOTES, 'UTF-8') ?></span>
                 <?php if (($me['role'] ?? '') === 'admin'): ?><a class="btn ghost" href="admin/index.php">管理后台</a><?php endif; ?>

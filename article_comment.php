@@ -7,10 +7,10 @@ require_login();
 $user      = current_user();
 $articleId = (int)($_POST['article_id'] ?? 0);
 $content   = trim($_POST['content'] ?? '');
-$back      = $_POST['back'] ?? 'article_list.php';
+$back      = $_POST['back'] ?? 'index.php';
 
 if ($articleId <= 0 || $content === '') {
-    echo '参数错误<br><a href="article_list.php">返回</a>';
+    echo '参数错误<br><a href="index.php">返回</a>';
     exit;
 }
 if (mb_strlen($content, 'UTF-8') > 500) {

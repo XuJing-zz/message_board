@@ -1,10 +1,6 @@
 # 内容后台（文章 + 点赞 + 留言）
 
-原生 PHP + MySQL 实现的内容管理系统，包含前台展示、后台管理，以及一套供 Vue / Apifox 使用的 JSON 接口。
-
-- 前台：留言板（旧）+ 文章浏览
-- 后台：管理员登录、文章增删改查、留言管理
-- 接口：管理员、文章后台、文章用户、点赞、留言 五组 JSON API
+原生 PHP + MySQL 实现的内容管理系统：首页展示文章列表，点进文章可以点赞和留言（留言挂在文章下），后台可管理文章与留言。
 
 ## 环境要求
 
@@ -24,33 +20,37 @@
 3. 导入数据库：
 
    ```bash
-   mysql -u root -p message_board < sql/init.sql
+   mysql -u root -p < sql/init.sql
    ```
 
    或 phpMyAdmin → SQL → 粘贴 `sql/init.sql` 执行。
 
 4. 启动 phpStudy 的 Nginx 与 MySQL
-5. 打开前台：<http://localhost/message/index.php>
-6. 打开后台：<http://localhost/message/admin/login.php>
+5. 前台：<http://localhost/message/index.php>
+6. 后台：<http://localhost/message/admin/login.php>
 
 ## 测试账号
 
 | 角色 | 账号 | 密码 | 入口 |
 |---|---|---|---|
 | 管理员 | admin | 123456 | `/admin/login.php` |
-| 普通用户 | 自行注册 | — | `/login.php` |
+| 普通用户 | 自行注册 | — | `/register.php` |
 
-## 页面路由
+## 页面结构
 
-### 前台（HTML，第一阶段成果，保留对照）
+### 前台
 
 | 文件 | 说明 |
 |---|---|
-| `index.php` | 留言板首页 |
-| `login.php` / `register.php` / `logout.php` | 用户登录 / 注册 / 退出 |
-| `save.php` / `like.php` / `delete.php` | 留言发表 / 点赞 / 删除 |
+| `index.php` | **首页：文章列表**（只显示已发布，分页） |
+| `article_detail.php?id=` | 文章详情：正文 + 点赞 + **该文章的留言** |
+| `article_like.php` | 点赞 / 取消（需登录） |
+| `article_comment.php` | 发表留言（需登录） |
+| `login.php` / `register.php` / `logout.php` | 登录 / 注册 / 退出 |
 
-### 后台（HTML，本阶段对照版）
+导航规则：普通用户看到「登录/注册」或「用户名 + 退出」；**管理员额外看到「管理后台」**。
+
+### 后台
 
 | 文件 | 说明 |
 |---|---|
@@ -58,7 +58,12 @@
 | `admin/index.php` | 文章列表（分页、状态筛选） |
 | `admin/edit.php` | 新增 / 编辑文章 |
 | `admin/comments.php` | 留言列表与删除 |
+| `admin/article_delete.php` | 删除文章（连带清理点赞与留言） |
 | `admin/logout.php` | 退出 |
+
+### 存档
+
+`legacy/` 是第一阶段「独立留言板」的代码（`save.php` / `like.php` / `delete.php` / `functions.php`），仅供对照，前台不再进入。
 
 ## JSON 接口（Apifox）
 
@@ -76,7 +81,7 @@ Base URL：`http://localhost/message/api`
 
 | 方法 | 路径 | 说明 |
 |---|---|---|
-| POST | `/admin/login.php` | 管理员登录，body: `username`、`password` |
+| POST | `/admin/login.php` | 登录，body: `username`、`password` |
 | POST | `/admin/logout.php` | 退出 |
 | GET | `/admin/me.php` | 当前登录信息 |
 
@@ -118,36 +123,51 @@ Base URL：`http://localhost/message/api`
 
 ```
 message/
-├─ index.php / login.php / register.php / logout.php
-├─ save.php / like.php / delete.php
-├─ auth.php            会话与登录校验
-├─ functions.php       公共函数
-├─ db.php             数据库配置（已忽略，不提交）
-├─ db.example.php     配置模板
-├─ style.css          样式
-├─ admin/             HTML 管理后台
+├─ index.php                首页：文章列表
+├─ article_detail.php       文章详情（点赞 + 留言）
+├─ article_like.php         点赞处理
+├─ article_comment.php      留言处理
+├─ login.php / register.php / logout.php
+├─ auth.php                 会话与登录校验
+├─ db.php                   数据库配置（已忽略，不提交）
+├─ db.example.php           配置模板
+├─ style.css                样式
+├─ legacy/                  第一阶段留言板（存档）
+│  ├─ save.php / like.php / delete.php
+│  └─ functions.php
+├─ admin/                   HTML 管理后台
 │  ├─ login.php
 │  ├─ index.php
 │  ├─ edit.php
 │  ├─ comments.php
 │  ├─ article_delete.php
 │  └─ logout.php
-├─ api/               JSON 接口
+├─ api/                     JSON 接口
 │  ├─ _common.php
-│  ├─ admin/          管理端接口
+│  ├─ admin/                管理端接口
 │  ├─ articles.php / article.php
 │  ├─ article_like.php / article_unlike.php
 │  ├─ comments.php
-│  └─ （旧留言板接口：login / register / messages / like ...）
+│  └─ （第一阶段留言板接口：login / register / messages / like ...）
 └─ sql/
-   └─ init.sql        建库建表脚本（含默认管理员）
+   └─ init.sql              建库建表脚本（含默认管理员）
 ```
+
+## 数据表
+
+| 表 | 说明 |
+|---|---|
+| `users` | 用户（`role`: admin / user） |
+| `articles` | 文章（标题、封面、正文、状态） |
+| `article_likes` | 文章点赞（唯一索引防重复） |
+| `article_comments` | 文章留言 |
+| `message` / `likes` | 第一阶段留言板遗留表（存档） |
 
 ## 安全说明
 
 - 密码使用 `password_hash()` / `password_verify()`
 - 全部数据库操作使用预处理语句
 - 输出统一 `htmlspecialchars()`，防 XSS
-- 管理端接口校验 `role = admin`
+- 管理端页面与接口校验 `role = admin`
 - 删除文章时同步清理点赞与留言
 - `db.php` 已加入 `.gitignore`，不会提交
