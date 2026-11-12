@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = '用户名和密码不能为空';
     } else {
         $stmt = mysqli_prepare($connect,
-            'SELECT id, username, password FROM users WHERE username = ?');
+            'SELECT id, username, password, role FROM users WHERE username = ?');
         if (!$stmt) {
             die('SQL 错误：' . mysqli_error($connect));
         }
@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user'] = [
                 'id'       => (int)$user['id'],
                 'username' => $user['username'],
+                'role'     => $user['role'] ?? 'user',
             ];
             header('Location: index.php');
             exit;
@@ -57,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p class="muted">还没有账号？<a href="register.php">去注册</a></p>
+        <p class="muted"><a href="article_list.php">← 去看文章</a></p>
     </div>
 </div>
 </body>

@@ -54,6 +54,7 @@ $comments = mysqli_stmt_get_result($stmt);
             <a class="btn ghost" href="article_list.php">← 返回列表</a>
             <?php if ($me): ?>
                 <span class="user">👤 <?= htmlspecialchars($me['username'], ENT_QUOTES, 'UTF-8') ?></span>
+                <?php if (($me['role'] ?? '') === 'admin'): ?><a class="btn ghost" href="admin/index.php">管理后台</a><?php endif; ?>
                 <a class="btn ghost" href="logout.php">退出</a>
             <?php else: ?>
                 <a class="btn ghost" href="login.php">登录</a>

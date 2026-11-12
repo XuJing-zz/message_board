@@ -31,16 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$errors) {
         $hash = password_hash($password, PASSWORD_DEFAULT);
         $stmt = mysqli_prepare($connect,
-            'INSERT INTO users (username, password) VALUES (?, ?)');
+            'INSERT INTO users (username, password, role) VALUES (?, ?, ?)');
         if (!$stmt) {
             die('SQL 错误：' . mysqli_error($connect));
         }
-        mysqli_stmt_bind_param($stmt, 'ss', $username, $hash);
+        $role = 'user';
+        mysqli_stmt_bind_param($stmt, 'sss', $username, $hash, $role);
         mysqli_stmt_execute($stmt);
 
         $_SESSION['user'] = [
             'id'       => (int)mysqli_insert_id($connect),
             'username' => $username,
+            'role'     => 'user',
         ];
 
         header('Location: index.php');
