@@ -61,10 +61,6 @@
 | `admin/article_delete.php` | 删除文章（连带清理点赞与留言） |
 | `admin/logout.php` | 退出 |
 
-### 存档
-
-`legacy/` 是第一阶段「独立留言板」的代码（`save.php` / `like.php` / `delete.php` / `functions.php`），仅供对照，前台不再进入。
-
 ## JSON 接口（Apifox）
 
 Base URL：`http://localhost/message/api`
@@ -132,9 +128,6 @@ message/
 ├─ db.php                   数据库配置（已忽略，不提交）
 ├─ db.example.php           配置模板
 ├─ style.css                样式
-├─ legacy/                  第一阶段留言板（存档）
-│  ├─ save.php / like.php / delete.php
-│  └─ functions.php
 ├─ admin/                   HTML 管理后台
 │  ├─ login.php
 │  ├─ index.php
@@ -148,7 +141,6 @@ message/
 │  ├─ articles.php / article.php
 │  ├─ article_like.php / article_unlike.php
 │  ├─ comments.php
-│  └─ （第一阶段留言板接口：login / register / messages / like ...）
 └─ sql/
    └─ init.sql              建库建表脚本（含默认管理员）
 ```
@@ -161,7 +153,6 @@ message/
 | `articles` | 文章（标题、封面、正文、状态） |
 | `article_likes` | 文章点赞（唯一索引防重复） |
 | `article_comments` | 文章留言 |
-| `message` / `likes` | 第一阶段留言板遗留表（存档） |
 
 ## 安全说明
 
